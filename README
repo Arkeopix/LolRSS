@@ -19,3 +19,4 @@ step 1:        step 2:		step 3:
 Using termcaps, the CLI should provide underlining of the curent selection.
 Navigation will be done using right, left, up and down. 
 Unroll sections will be done using enter and "reroll" section using esc.
+ReadMore will open default web broser to read the article on the website.
