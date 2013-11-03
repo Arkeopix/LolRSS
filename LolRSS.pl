@@ -2,7 +2,6 @@
 
 use Modern::Perl;
 
-my $done = 0;
 my %func_hash = (
     1 => 'add_feed',
     2 => 'show_feeds',
@@ -23,6 +22,9 @@ my $add_feed_text1 = q|Here you can add a feed. Just follow the instructions.
 First add a name for the feed you want to follow: |;
 my $add_feed_text2 = "And now add the URL of the feed you want to follow: ";
 
+my $quit_text = "Later mon\n";
+
+
 my $opt_error = "Option must be between 1 and 4\n";
 my $opn_error = "Could not open file\n";
 my $feed_exists_error = "Feed name/url already exists: ";
@@ -35,12 +37,13 @@ sub add_feed{
     my $feed_url = <STDIN>;
     
     unless (-e $feed_file) {
-	open FH, '>', $feed_file and close FH;
+	my $FH;
+	open $FH, '>', $feed_file and close $FH;
     }
         
     my $FILE;
     unless (open $FILE, '+<', $feed_file) {
-	warn $opn_error;
+	die $opn_error;
     }
     
     while (my $line = <$FILE>) {
@@ -54,18 +57,22 @@ sub add_feed{
 }
 
 sub show_feeds{
-
+    my $FILE:
+    unless (open $FILE, '<', $feed_file) {
+	die $opn_error;
+    }
 }
 
 sub delete_feed{
-
-}
-
-sub quit{
     
 }
 
-while ($done == 0) {
+sub quit{
+    print $quit_text; 
+    exit;
+}
+
+while (42) {
     print $welcome_text;
     my $buff = <STDIN>;
     chomp $buff;

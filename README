@@ -1,0 +1,21 @@
+LolRSS is a simple feed agregator written in perl for fun's sake.
+
+Here is how the CLI should work in the show feed part:
+
+step 1:        step 2:		step 3:
+|-FeedName1    |-FeedName1	|-FeedName1 
+|-FeedName2    |  |		|  |
+|-FeedName3    |  |--Title1	|  |--Title1
+	       |  |--Title2  	|  |   |
+	       |  |--Title3	|  |   |--Conten
+	       |		|  |   |ReadMore: Y/n ?		
+	       |-FeedName2	|  |   
+	       |-FeedName3	|  |--Title2
+	       			|  |--Title3
+				|  
+				|-FeedName2
+				|-FeedName3
+
+Using termcaps, the CLI should provide underlining of the curent selection.
+Navigation will be done using right, left, up and down. 
+Unroll sections will be done using enter and "reroll" section using esc.
