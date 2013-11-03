@@ -8,7 +8,7 @@ step 1:        step 2:		step 3:
 |-FeedName3    |  |--Title1	|  |--Title1
 	       |  |--Title2  	|  |   |
 	       |  |--Title3	|  |   |--Conten
-	       |		|  |   |ReadMore: Y/n ?		
+	       |		|  |   |  ReadMore: Y/n ?		
 	       |-FeedName2	|  |   
 	       |-FeedName3	|  |--Title2
 	       			|  |--Title3
