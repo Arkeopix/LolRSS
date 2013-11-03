@@ -25,6 +25,7 @@ my $add_feed_text2 = "And now add the URL of the feed you want to follow: ";
 
 my $opt_error = "Option must be between 1 and 4\n";
 my $opn_error = "Could not open file\n";
+my $feed_exists_error = "Feed name/url already exists: ";
 
 sub add_feed{
     print $add_feed_text1;
@@ -32,13 +33,19 @@ sub add_feed{
     chomp $feed_name;
     print $add_feed_text2;
     my $feed_url = <STDIN>;
-    chomp $feed_url;
     
     my $FILE;
-    unless (open $FILE, '>>', $feed_file) {
+    unless (open $FILE, '+<', $feed_file) {
 	warn $opn_error;
     }
-    print $FILE $feed_name . "=" . $feed_url . ";";
+    
+    while (my $line = <$FILE>) {
+	if ($line =~ /$feed_name/ or $line =~ /$feed_url/) {
+	    print $feed_exists_error . $feed_name . "=" . $feed_url . "\n";
+	    return;
+	}
+    }
+    print $FILE $feed_name . "=" . $feed_url;
     close $FILE;
 }
 
