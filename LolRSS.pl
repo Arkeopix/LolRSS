@@ -34,6 +34,10 @@ sub add_feed{
     print $add_feed_text2;
     my $feed_url = <STDIN>;
     
+    unless (-e $feed_file) {
+	open FH, '>', $feed_file and close FH;
+    }
+        
     my $FILE;
     unless (open $FILE, '+<', $feed_file) {
 	warn $opn_error;
