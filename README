@@ -1,5 +1,7 @@
 LolRSS is a simple feed agregator written in perl for fun's sake.
 
+File storage changed to sqlite. Implementation in progress.
+
 Here is how the CLI should work in the show feed part:
 
 step 1:        step 2:		step 3:

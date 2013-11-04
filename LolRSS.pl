@@ -1,6 +1,12 @@
 #! /usr/bin/perl
 
 use Modern::Perl;
+use DBI;
+
+my $dbh = DBI->connect(
+    "dbi:SQLite:dbname=feed.db",
+    {RaiseError => 1}
+    ) or die $DBI::errstr;
 
 my %func_hash = (
     1 => 'add_feed',
@@ -36,31 +42,11 @@ sub add_feed{
     print $add_feed_text2;
     my $feed_url = <STDIN>;
     
-    unless (-e $feed_file) {
-	my $FH;
-	open $FH, '>', $feed_file and close $FH;
-    }
-        
-    my $FILE;
-    unless (open $FILE, '+<', $feed_file) {
-	die $opn_error;
-    }
-    
-    while (my $line = <$FILE>) {
-	if ($line =~ /$feed_name/ or $line =~ /$feed_url/) {
-	    print $feed_exists_error . $feed_name . "=" . $feed_url . "\n";
-	    return;
-	}
-    }
-    print $FILE $feed_name . "=" . $feed_url;
-    close $FILE;
+   
 }
 
 sub show_feeds{
-    my $FILE:
-    unless (open $FILE, '<', $feed_file) {
-	die $opn_error;
-    }
+   
 }
 
 sub delete_feed{
@@ -69,13 +55,15 @@ sub delete_feed{
 
 sub quit{
     print $quit_text; 
+    $dbh->disconnect();
     exit;
 }
 
 while (42) {
     print $welcome_text;
     my $buff = <STDIN>;
-    chomp $buff;
+    chomp $buff;    
+    
     {
 	no strict 'refs';
 	$buff > 4 ?  print $opt_error : &{$func_hash{$buff}}();
