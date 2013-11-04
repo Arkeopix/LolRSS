@@ -48,8 +48,9 @@ sub add_feed{
 	open $FH, '>', $feed_file and close $FH;
     }
     
-    $dbh->do("CREATE TABLE IF NOT EXISTS FeedsNames(Id INT PRIMARY KEY, Name TEXT, URL TEXT)");
-    $dbh->do("INSERT INTO FeedsNames VALUES($feed_name, $feed_url)");
+    $dbh->do("CREATE TABLE IF NOT EXISTS FeedsNames(Id INT PRIMARY KEY, Name TEXT UNIQUE, URL TEXT UNIQUE)");
+    my $sth = $dbh->prepare("INSERT INTO FeedsNames(Name, URL) VALUES(?, ?)");
+    $sth->execute($feed_name, $feed_url);
 }
 
 sub show_feeds{
