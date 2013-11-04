@@ -54,7 +54,13 @@ sub add_feed{
 }
 
 sub show_feeds{
+    my $sth = $dbh->prepare("SELECT Name, URL FROM FeedsNames");
+    $sth->execute();
     
+    my $row;
+    while ($row = $sth->fetchrow_arrayref()) {
+	print "@$row[0] @$row[1]\n";
+    }
 }
 
 sub delete_feed{
