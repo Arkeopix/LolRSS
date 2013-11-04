@@ -15,7 +15,7 @@ my %func_hash = (
     4 => 'quit',
     );
 
-my $feed_file = ".feed_list";
+my $feed_file = "feed.db";
 
 my $welcome_text = q|Hello and welcome to LolRSS. What would you like to do ?
 1: add a feed
@@ -41,8 +41,15 @@ sub add_feed{
     chomp $feed_name;
     print $add_feed_text2;
     my $feed_url = <STDIN>;
+    chomp $feed_url;
     
-   
+    unless (-e $feed_file) {
+	my $FH;
+	open $FH, '>', $feed_file and close $FH;
+    }
+    
+    $dbh->do("CREATE TABLE IF NOT EXISTS FeedsNames(Id INT PRIMARY KEY, Name TEXT, URL TEXT)");
+    $dbh->do("INSERT INTO FeedsNames VALUES($feed_name, $feed_url)");
 }
 
 sub show_feeds{
