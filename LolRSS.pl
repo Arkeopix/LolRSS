@@ -59,7 +59,7 @@ sub add_feed{
 
 sub show_feeds{
     $dbh->do("DROP TABLE IF EXISTS Articles");
-    $dbh->do("CREATE TABLE Articles(ID INT PRIMARY KEY, Name TEXT, Title TEXT, Link TEXT)");
+    $dbh->do("CREATE TABLE Articles(ID INT PRIMARY KEY, Name TEXT, Title TEXT, Desc TEXT, Link TEXT)");
         
     my $sth = $dbh->prepare("SELECT Name, URL FROM FeedsNames");
     $sth->execute();
@@ -70,11 +70,14 @@ sub show_feeds{
 	
 	my $feed = XML::Feed->parse(URI->new(@$row[1]))
 	    or die XML::Feed->errstr;
-	
+
 	for my $entry ($feed->entries) {
-	    #do stuff here
+	    my $title = $entry->title;
+	    my $body = $entry->content->body; $body =~ s|<.+?>||g;
+	    my $link = $entry->link;
+	    my $h = $dbh->prepare("INSERT INTO Articles(Name, Title, Desc, Link) VALUES(?,?,?,?)");
+	    $h->execute(@$row[0], $title, $body, $link);
 	}
-	print "quit\n";
     }
 }
 
