@@ -2,7 +2,7 @@
 
 use Modern::Perl;
 use DBI;
-use XML::RSS;
+use XML::Feed;
 use LWP::Simple;
 use utf8;
 
@@ -59,26 +59,22 @@ sub add_feed{
 
 sub show_feeds{
     $dbh->do("DROP TABLE IF EXISTS Articles");
-    $dbh->do("CREATE TABLE IF NOT EXISTS Articles(ID INT PRIMARY KEY, Name TEXT, Title TEXT, Description TEXT, Link TEXT)");
+    $dbh->do("CREATE TABLE Articles(ID INT PRIMARY KEY, Name TEXT, Title TEXT, Link TEXT)");
         
     my $sth = $dbh->prepare("SELECT Name, URL FROM FeedsNames");
     $sth->execute();
         
     my $row;
     while ($row = $sth->fetchrow_arrayref()) {
-	print "@$row[0] @$row[1]\n"; #Test printing
+	print "NAME: @$row[0] | URL: @$row[1]\n"; #Test printing
 	
-	my $content = get @$row[1];
-	my $rss = XML::RSS->new;
-	$rss->parse($content);
+	my $feed = XML::Feed->parse(URI->new(@$row[1]))
+	    or die XML::Feed->errstr;
 	
-	my @items = @{$rss->{items}};
-	foreach my $item (@items) {
-	    my $title = $item->{title};
-	    my $link = $item->{link};
-	    $sth = $dbh->prepare("INSERT INTO Articles(Name, Title, Link) VALUES(?,?,?)");
-	    $sth->execute(@$row[0], $title, $link);
+	for my $entry ($feed->entries) {
+	    #do stuff here
 	}
+	print "quit\n";
     }
 }
 
