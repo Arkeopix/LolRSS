@@ -10,7 +10,6 @@ my $dbh = DBI->connect(
     "dbi:SQLite:dbname=feed.db",
     {RaiseError => 1}
     ) or die $DBI::errstr;
-$dbh->do("PRAGMA journal_mode = WAL");
 
 my %func_hash = (
     1 => 'add_feed',
@@ -55,19 +54,20 @@ sub add_feed{
     $dbh->do("CREATE TABLE IF NOT EXISTS FeedsNames(Id INT PRIMARY KEY, Name TEXT UNIQUE, URL TEXT UNIQUE)");
     my $sth = $dbh->prepare("INSERT INTO FeedsNames(Name, URL) VALUES(?, ?)");
     $sth->execute($feed_name, $feed_url);
+    $sth->finish();
 }
 
 sub show_feeds{
-    my $sth = $dbh->prepare("SELECT Name, URL FROM FeedsNames");
-    $sth->execute();
-
     $dbh->do("DROP TABLE IF EXISTS Articles");
     $dbh->do("CREATE TABLE IF NOT EXISTS Articles(ID INT PRIMARY KEY, Name TEXT, Title TEXT, Description TEXT, Link TEXT)");
-    
+        
+    my $sth = $dbh->prepare("SELECT Name, URL FROM FeedsNames");
+    $sth->execute();
+        
     my $row;
     while ($row = $sth->fetchrow_arrayref()) {
 	print "@$row[0] @$row[1]\n"; #Test printing
-
+	
 	my $content = get @$row[1];
 	my $rss = XML::RSS->new;
 	$rss->parse($content);
@@ -79,7 +79,6 @@ sub show_feeds{
 	    $sth = $dbh->prepare("INSERT INTO Articles(Name, Title, Link) VALUES(?,?,?)");
 	    $sth->execute(@$row[0], $title, $link);
 	}
-	
     }
 }
 
