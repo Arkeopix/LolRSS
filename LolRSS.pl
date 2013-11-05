@@ -2,11 +2,15 @@
 
 use Modern::Perl;
 use DBI;
+use XML::RSS;
+use LWP::Simple;
+use utf8;
 
 my $dbh = DBI->connect(
     "dbi:SQLite:dbname=feed.db",
     {RaiseError => 1}
     ) or die $DBI::errstr;
+$dbh->do("PRAGMA journal_mode = WAL");
 
 my %func_hash = (
     1 => 'add_feed',
@@ -56,10 +60,26 @@ sub add_feed{
 sub show_feeds{
     my $sth = $dbh->prepare("SELECT Name, URL FROM FeedsNames");
     $sth->execute();
+
+    $dbh->do("DROP TABLE IF EXISTS Articles");
+    $dbh->do("CREATE TABLE IF NOT EXISTS Articles(ID INT PRIMARY KEY, Name TEXT, Title TEXT, Description TEXT, Link TEXT)");
     
     my $row;
     while ($row = $sth->fetchrow_arrayref()) {
-	print "@$row[0] @$row[1]\n";
+	print "@$row[0] @$row[1]\n"; #Test printing
+
+	my $content = get @$row[1];
+	my $rss = XML::RSS->new;
+	$rss->parse($content);
+	
+	my @items = @{$rss->{items}};
+	foreach my $item (@items) {
+	    my $title = $item->{title};
+	    my $link = $item->{link};
+	    $sth = $dbh->prepare("INSERT INTO Articles(Name, Title, Link) VALUES(?,?,?)");
+	    $sth->execute(@$row[0], $title, $link);
+	}
+	
     }
 }
 
