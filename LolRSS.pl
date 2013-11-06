@@ -12,6 +12,11 @@ my $dbh = DBI->connect(
     {RaiseError => 1}
     ) or die $DBI::errstr;
 
+initscr();
+clear();
+noecho();
+cbreak();
+
 my %func_hash = (
     1 => 'add_feed',
     2 => 'show_feeds',
@@ -40,7 +45,10 @@ my $opn_error = "Could not open file\n";
 my $feed_exists_error = "Feed name/url already exists: ";
 
 sub add_feed{
-    print $add_feed_text1;
+    my $add_win = newwin($COLS, $LINES, 0, 0);
+    clear();
+    addstr(0, 0,  $add_feed_text1);
+    refresh();
     my $feed_name = <STDIN>;
     chomp $feed_name;
     print $add_feed_text2;
@@ -97,8 +105,9 @@ sub quit{
 
 my $width = 30;
 my $height = 10;
-my $startx = 0;
-my $starty = 0;
+my $startx = ($COLS - $width) / 2;
+my $starty = ($LINES - $height) / 2;
+my $menu_win = newwin($height, $width, $starty, $startx);
 
 my @choices = (
     "Add Feed",
@@ -108,18 +117,9 @@ my @choices = (
     );
 
 my $n_choices = @choices;
-
 my $highlight = 1;
 my $choice = 0;
 
-initscr();
-clear();
-noecho();
-cbreak();
-$startx = ($COLS - $width) / 2;
-$starty = ($LINES - $height) / 2;
-
-my $menu_win = newwin($height, $width, $starty, $startx);
 keypad(1);
 keypad($menu_win, 1);
 addstr(0, 0, "Use arrow keys to go up and down, Press enter to select a choice");
@@ -146,22 +146,14 @@ while (42) {
         }
     }
     elsif ($c eq "\n") {
-        no strict 'refs';
-	$choice = $highlight;
-	&{$func_hash{$choice}}();
+	{
+	    no strict 'refs';
+	    $choice = $highlight;
+	    &{$func_hash{$choice}}();
+	}
     }
     print_menu($menu_win, $highlight);
-    print $choice;
     last if ($choice);
-
-
-#    print $welcome_text;
-#    my $buff = <STDIN>;
-#    chomp $buff;        
-#    {
-#	no strict 'refs';
-#	$buff > 4 ?  print $opt_error : &{$func_hash{$buff}}();
-#    }
 }
 
 
