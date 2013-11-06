@@ -5,6 +5,7 @@ use DBI;
 use XML::Feed;
 use LWP::Simple;
 use utf8;
+use Curses;
 
 my $dbh = DBI->connect(
     "dbi:SQLite:dbname=feed.db",
@@ -88,16 +89,100 @@ sub delete_feed{
 sub quit{
     print $quit_text; 
     $dbh->disconnect();
+    clrtoeol();
+    refresh();
+    endwin();
     exit;
 }
 
+my $width = 30;
+my $height = 10;
+my $startx = 0;
+my $starty = 0;
+
+my @choices = (
+    "Add Feed",
+    "Show Feed",
+    "Delete Feed",
+    "Quit",
+    );
+
+my $n_choices = @choices;
+
+my $highlight = 1;
+my $choice = 0;
+
+initscr();
+clear();
+noecho();
+cbreak();
+$startx = ($COLS - $width) / 2;
+$starty = ($LINES - $height) / 2;
+
+my $menu_win = newwin($height, $width, $starty, $startx);
+keypad(1);
+keypad($menu_win, 1);
+addstr(0, 0, "Use arrow keys to go up and down, Press enter to select a choice");
+refresh();
+print_menu($menu_win, $highlight);
+
 while (42) {
-    print $welcome_text;
-    my $buff = <STDIN>;
-    chomp $buff;    
-    
-    {
-	no strict 'refs';
-	$buff > 4 ?  print $opt_error : &{$func_hash{$buff}}();
+
+    my $c = getch($menu_win);
+    if ($c eq KEY_UP) {
+        if ($highlight == 1) {
+            $highlight = $n_choices;
+        }
+        else {
+            $highlight--;
+        }
     }
+    elsif ($c eq KEY_DOWN) {
+        if ($highlight == $n_choices) {
+            $highlight = 1;
+        }
+        else {
+            $highlight++;
+        }
+    }
+    elsif ($c eq "\n") {
+        no strict 'refs';
+	$choice = $highlight;
+	&{$func_hash{$choice}}();
+    }
+    print_menu($menu_win, $highlight);
+    print $choice;
+    last if ($choice);
+
+
+#    print $welcome_text;
+#    my $buff = <STDIN>;
+#    chomp $buff;        
+#    {
+#	no strict 'refs';
+#	$buff > 4 ?  print $opt_error : &{$func_hash{$buff}}();
+#    }
 }
+
+
+sub print_menu {
+    $menu_win = shift;
+    $highlight = shift;
+
+    my $x = 2;
+    my $y = 2;
+    box($menu_win, 0, 0);
+    for (my $i = 0; $i < $n_choices; $i++) {
+        if ($highlight == $i + 1) {
+            attron($menu_win, A_REVERSE);
+            addstr($menu_win, $y, $x, $choices[$i]);
+            attroff($menu_win, A_REVERSE);
+        }
+        else {
+            addstr($menu_win, $y, $x, $choices[$i]);
+        }
+        $y++;
+    }
+    refresh($menu_win);
+}
+
