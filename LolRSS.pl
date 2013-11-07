@@ -83,6 +83,12 @@ sub show_feeds{
 	    $h->execute(@$row[0], $title, $body, $link);
 	}
     }
+    my $query = $dbh->prepare("Select Name, Title, Desc, Link FROM Articles");
+    $query->execute();
+    my $entries;
+    while ($entries = $query->fetchrow_arrayref()) {
+	print "@$entries[1]\n @$entries[2]\n\t @$entries[3]";
+    }
 }
 
 sub delete_feed{
