@@ -12,11 +12,6 @@ my $dbh = DBI->connect(
     {RaiseError => 1}
     ) or die $DBI::errstr;
 
-initscr();
-clear();
-noecho();
-cbreak();
-
 my %func_hash = (
     1 => 'add_feed',
     2 => 'show_feeds',
@@ -97,84 +92,15 @@ sub delete_feed{
 sub quit{
     print $quit_text; 
     $dbh->disconnect();
-    clrtoeol();
-    refresh();
-    endwin();
     exit;
 }
 
-my $width = 30;
-my $height = 10;
-my $startx = ($COLS - $width) / 2;
-my $starty = ($LINES - $height) / 2;
-my $menu_win = newwin($height, $width, $starty, $startx);
-
-my @choices = (
-    "Add Feed",
-    "Show Feed",
-    "Delete Feed",
-    "Quit",
-    );
-
-my $n_choices = @choices;
-my $highlight = 1;
-my $choice = 0;
-
-keypad(1);
-keypad($menu_win, 1);
-addstr(0, 0, "Use arrow keys to go up and down, Press enter to select a choice");
-refresh();
-print_menu($menu_win, $highlight);
-
 while (42) {
-
-    my $c = getch($menu_win);
-    if ($c eq KEY_UP) {
-        if ($highlight == 1) {
-            $highlight = $n_choices;
-        }
-        else {
-            $highlight--;
-        }
+    print $welcome_text;
+    my $buff = <STDIN>;
+    chomp $buff;
+    {
+	no strict 'refs';
+	&{$func_hash{$buff}}();
     }
-    elsif ($c eq KEY_DOWN) {
-        if ($highlight == $n_choices) {
-            $highlight = 1;
-        }
-        else {
-            $highlight++;
-        }
-    }
-    elsif ($c eq "\n") {
-	{
-	    no strict 'refs';
-	    $choice = $highlight;
-	    &{$func_hash{$choice}}();
-	}
-    }
-    print_menu($menu_win, $highlight);
-    last if ($choice);
 }
-
-
-sub print_menu {
-    $menu_win = shift;
-    $highlight = shift;
-
-    my $x = 2;
-    my $y = 2;
-    box($menu_win, 0, 0);
-    for (my $i = 0; $i < $n_choices; $i++) {
-        if ($highlight == $i + 1) {
-            attron($menu_win, A_REVERSE);
-            addstr($menu_win, $y, $x, $choices[$i]);
-            attroff($menu_win, A_REVERSE);
-        }
-        else {
-            addstr($menu_win, $y, $x, $choices[$i]);
-        }
-        $y++;
-    }
-    refresh($menu_win);
-}
-
