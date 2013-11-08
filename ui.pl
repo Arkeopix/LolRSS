@@ -8,7 +8,7 @@ my $cui = new Curses::UI (
     -clear_on_exit => 1, 
     -color_support => 1,
 );
-$cui->set_binding( sub { exit(0); } , "\cQ");
+$cui->set_binding( \&quit, "\cQ");
 
 my $main = $cui->add(
     'mainw', 'Window',
@@ -92,6 +92,12 @@ my $add_button = $page_manage_feed->add(
     -x		=> 5,
     );
 		    
+my @to_delete = $page_manage_feed->add(
+    undef, 'Listbox',
+    -y		=> 5,
+    -x		=> 100,
+    #to finish
+    );
 
 #my $page_show_feed = $notebook->add_page("Show Feed");
 #$page_show_feed->add(
