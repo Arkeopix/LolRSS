@@ -32,11 +32,21 @@ my $notebook = $main->add(
 
 my $page_manage_feed = $notebook->add_page("Manage Feed");
 $page_manage_feed->add(
+    undef, 'Label',
+    -border	=> 1,
+    -bfg	=> 'blue',
+    -text	=> "Here You can Manage your Feeds.\n"
+		  ."To add a Feed you just have to fill the empty fields and press the add Button\n"
+		  ."To delete a feed, just check it and press the delete button",
+    -x		=> 30,
+    );
+
+$page_manage_feed->add(
     'FeedNameText', 'TextEntry',
     -border	=> 0,
     -fg		=> 'blue',
     -x		=> 1,
-    -y		=> 1,
+    -y		=> 6,
     -width	=> 10,
     -text	=> 'Feed Name',
     -focusable	=> 0,
@@ -48,6 +58,7 @@ my $FeedName = $page_manage_feed->add(
     -border	=> 1,
     -bfg	=> 'blue',
     -x		=> 12,
+    -y		=> 5,
     -width	=> 20,
     );
 
@@ -56,7 +67,7 @@ $page_manage_feed->add(
     -border	=> 0,
     -fg		=> 'blue',
     -x		=> 1,
-    -y		=> 4,
+    -y		=> 10,
     -width	=> 10,
     -text	=> 'Feed Url',
     -focusable	=> 0,
@@ -67,31 +78,26 @@ my $FeedUrl = $page_manage_feed->add(
     'FeedURL', 'TextEntry',
     -border	=> 1,
     -bfg	=> 'blue',
-    -y		=> 3,
+    -y		=> 9,
     -x		=> 12,
     -width	=> 20,
     );
 
+
+my $add_button = $page_manage_feed->add(
+    'AddButton', 'Buttonbox',
+    -buttons	=>[{-label	=> "< ADD >",
+		    -onpress	=> \&add_feed}],
+    -y		=> 12,
+    -x		=> 5,
+    );
+		    
 
 #my $page_show_feed = $notebook->add_page("Show Feed");
 #$page_show_feed->add(
     #insert code here
 #   );
 
-#my @pagename = (
-#    "Manage Feed",
-#    "Show Feed",
-#    );
-#my @pages;
-#for (my $i = 1; $i <= 2; ++$i) {
-#    $pages[$i] = $notebook->add_page("$pagename[$i -1]");
-#    $pages[$i]->add(
-#        undef, 'TextViewer',
-#        -x    => 1,
-#        -y    => 5,
-#        -text => $pagename[$i-1],
-#    );
-#}
 $notebook->focus;
 
 # Let user play.
