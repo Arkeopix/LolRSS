@@ -23,8 +23,6 @@ $main->add(
     -bold  => 1,
 );
 
-
-# Create notebook and a couple of pages.
 my $notebook = $main->add(
     undef, 'Notebook',
     -height => $main->height - 1,
@@ -32,65 +30,65 @@ my $notebook = $main->add(
 
 my $page_manage_feed = $notebook->add_page("Manage Feed");
 $page_manage_feed->add(
-    undef, 'Label',
-    -border	=> 1,
-    -bfg	=> 'blue',
-    -text	=> "Here You can Manage your Feeds.\n"
-		  ."To add a Feed you just have to fill the empty fields and press the add Button\n"
-		  ."To delete a feed, just check it and press the delete button",
-    -x		=> 30,
-    );
+     undef, 'Label',
+     -border	=> 1,
+     -bfg	=> 'blue',
+     -text	=> "Here You can Manage your Feeds.\n"
+ 		  ."To add a Feed you just have to fill the empty fields and press the add Button\n"
+ 		  ."To delete a feed, just check it and press the delete button",
+     -x		=> 30,
+     );
 
 $page_manage_feed->add(
-    'FeedNameText', 'TextEntry',
-    -border	=> 0,
-    -fg		=> 'blue',
-    -x		=> 1,
-    -y		=> 6,
-    -width	=> 10,
-    -text	=> 'Feed Name',
-    -focusable	=> 0,
-    -readonly	=> 1,
-    );
+     'FeedNameText', 'TextEntry',
+     -border	=> 0,
+     -fg		=> 'blue',
+     -x		=> 5,
+     -y		=> 9,
+     -width	=> 10,
+     -text	=> 'Feed Name',
+     -focusable	=> 0,
+     -readonly	=> 1,
+     );
 
-my $FeedName = $page_manage_feed->add(
-    'FeedName', 'TextEntry',
-    -border	=> 1,
-    -bfg	=> 'blue',
-    -x		=> 12,
-    -y		=> 5,
-    -width	=> 20,
-    );
+ my $FeedName = $page_manage_feed->add(
+     'FeedName', 'TextEntry',
+     -border	=> 1,
+     -bfg	=> 'blue',
+     -x		=> 15,
+     -y		=> 8,
+     -width	=> 20,
+     );
 
-$page_manage_feed->add(
-    'FeedURLText', 'TextEntry',
-    -border	=> 0,
-    -fg		=> 'blue',
-    -x		=> 1,
-    -y		=> 10,
-    -width	=> 10,
-    -text	=> 'Feed Url',
-    -focusable	=> 0,
-    -readonly	=> 1,
-    );
+ $page_manage_feed->add(
+     'FeedURLText', 'TextEntry',
+     -border	=> 0,
+     -fg		=> 'blue',
+     -x		=> 5,
+     -y		=> 13,
+     -width	=> 10,
+     -text	=> 'Feed Url',
+     -focusable	=> 0,
+     -readonly	=> 1,
+     );
 
-my $FeedUrl = $page_manage_feed->add(
-    'FeedURL', 'TextEntry',
-    -border	=> 1,
-    -bfg	=> 'blue',
-    -y		=> 9,
-    -x		=> 12,
-    -width	=> 20,
-    );
+ my $FeedUrl = $page_manage_feed->add(
+     'FeedURL', 'TextEntry',
+     -border	=> 1,
+     -bfg	=> 'blue',
+     -y		=> 12,
+     -x		=> 15,
+     -width	=> 20,
+     );
 
 
-my $add_button = $page_manage_feed->add(
-    'AddButton', 'Buttonbox',
-    -buttons	=>[{-label	=> "< ADD >",
-		    -onpress	=> \&add_feed}],
-    -y		=> 12,
-    -x		=> 5,
-    );
+ my $add_button = $page_manage_feed->add(
+     'AddButton', 'Buttonbox',
+     -buttons	=>[{-label	=> "< ADD >",
+ 		    -onpress	=> \&add_feed}],
+     -y		=> 16,
+     -x		=> 15,
+     );
 		    
 $page_manage_feed->add(
     undef, 'Listbox',
@@ -98,7 +96,7 @@ $page_manage_feed->add(
     -x		=> 90,
     -padbottom	=> 10,
     -fg		=> 'red',
-    -fbg	=> 'red',
+    -bfg	=> 'red',
     -values	=> [1, 2, 3],
     -labels	=> {1 => 'lol', 2 => 'poil', 3 => 'mdr'},
     -width	=> 40,
@@ -109,19 +107,29 @@ $page_manage_feed->add(
     -onchange	=> \&add_to_del,
     );
 
-my $del_button = $page_manage_feed->add(
-    'DelButton', 'Buttonbox',
-    -buttons	=>[{-label	=> "< DEL >",
-		    -onpress	=> \&Delete_feed}],
-    -y		=> 40,
-    -x		=> 90,
+ my $del_button = $page_manage_feed->add(
+     'DelButton', 'Buttonbox',
+     -buttons	=>[{-label	=> "< DEL >",
+ 		    -onpress	=> \&Delete_feed}],
+     -y		=> 40,
+     -x		=> 90,
+     );
+
+
+my $page_show_feed = $notebook->add_page("Show Feed");
+$page_show_feed->add(
+    undef, 'Listbox',
+    -y          => 2,
+    -padbottom  => 2,
+    -values     => [1, 2, 3],
+    -labels     => {1 => 'lol', 2 => 'poil', 3 => 'mdr'},
+    -width      => 20,
+    -border     => 1,
+    -title      => 'Feed List',
+    -vscrollbar => 1,
+
     );
 
-
-#my $page_show_feed = $notebook->add_page("Show Feed");
-#$page_show_feed->add(
-    #insert code here
-#   );
 
 $notebook->focus;
 $cui->mainloop;
