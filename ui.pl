@@ -92,12 +92,31 @@ my $add_button = $page_manage_feed->add(
     -x		=> 5,
     );
 		    
-my @to_delete = $page_manage_feed->add(
+$page_manage_feed->add(
     undef, 'Listbox',
     -y		=> 5,
-    -x		=> 100,
-    #to finish
+    -x		=> 90,
+    -padbottom	=> 10,
+    -fg		=> 'red',
+    -fbg	=> 'red',
+    -values	=> [1, 2, 3],
+    -labels	=> {1 => 'lol', 2 => 'poil', 3 => 'mdr'},
+    -width	=> 40,
+    -border	=> 1,
+    -multi	=> 1,
+    -title	=> 'List of Feeds',
+    -vscrollbar	=> 1,
+    -onchange	=> \&add_to_del,
     );
+
+my $del_button = $page_manage_feed->add(
+    'DelButton', 'Buttonbox',
+    -buttons	=>[{-label	=> "< DEL >",
+		    -onpress	=> \&Delete_feed}],
+    -y		=> 40,
+    -x		=> 90,
+    );
+
 
 #my $page_show_feed = $notebook->add_page("Show Feed");
 #$page_show_feed->add(
@@ -105,6 +124,4 @@ my @to_delete = $page_manage_feed->add(
 #   );
 
 $notebook->focus;
-
-# Let user play.
 $cui->mainloop;
