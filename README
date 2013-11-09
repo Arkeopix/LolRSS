@@ -1,24 +1,4 @@
 LolRSS is a simple feed agregator written in perl for fun's sake.
 
-File storage changed to sqlite. Implementation in progress.
+File storage changed to sqlite.
 
-Here is how the CLI should work in the show feed part:
-
-step 1:        step 2:		step 3:
-|-FeedName1    |-FeedName1	|-FeedName1 
-|-FeedName2    |  |		|  |
-|-FeedName3    |  |--Title1	|  |--Title1
-	       |  |--Title2  	|  |   |
-	       |  |--Title3	|  |   |--Conten
-	       |		|  |   |  ReadMore: Y/n ?		
-	       |-FeedName2	|  |   
-	       |-FeedName3	|  |--Title2
-	       			|  |--Title3
-				|  
-				|-FeedName2
-				|-FeedName3
-
-Using Curses, the TUI should provide underlining of the curent selection.
-Navigation will be done using right, left, up and down. 
-Unroll sections will be done using enter and "reroll" section using esc.
-ReadMore will open default web broser to read the article on the website.
