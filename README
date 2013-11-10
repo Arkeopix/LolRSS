@@ -2,3 +2,9 @@ LolRSS is a simple feed agregator written in perl for fun's sake.
 
 File storage changed to sqlite.
 
+to do list:
+delete_feed():
+	-load list of feeds and put them in $values;
+	-push selected values in @to_del;
+	-delete selected feeds from feed.db onpress event;
+	-error handling;

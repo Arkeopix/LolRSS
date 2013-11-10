@@ -190,16 +190,23 @@ $w{2}->add(undef, 'Listbox',
 	   -multi	=> 1,
 	   -title	=> 'Feed List',
 	   -vscrollbar  => 1,
-	   -onchange	=> \&add_to_delete,
+	   -onchange	=> \&add_to_del,
 );
 
 $w{2}->add('DelButton', 'Buttonbox',
 	   -buttons	=> [ {-label	=> '< DEL >',
-			      -onpress	=> \&add_feed } ],
+			      -onpress	=> \&del_feed } ],
 	   -y		=> 35,
 	   -x		=> 10,
 );
 
+sub add_to_del {
+
+}
+
+sub del_feed {
+    
+}
 
 # ----------------------------------------------------------------------
 #Show Feed
