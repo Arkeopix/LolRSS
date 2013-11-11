@@ -5,10 +5,9 @@ use Curses::UI;
 use DBI;
 use XML::Feed;
 use LWP::Simple;
-use feature 'state';
 
 #-----------------------------------------------------------------------
-#Global vars and init
+#Full scope vars and init
 #-----------------------------------------------------------------------
 
 open STDERR, '>/dev/null';
@@ -131,19 +130,36 @@ sub refresh_list() {
     }
     $value = \@val;
     
-    
-    $w{$nr}->add(undef, 'Listbox',
-		 -y		=> 5,
-		 -x		=> 2,
-		 -padbottom	=> 10,
-		 -values	=> $value,
-		 -width		=> 30,
-		 -border	=> 1,
-		 -multi		=> 1,
-		 -title		=> 'Feed List',
-		 -vscrollbar	=> 1,
-		 -onchange	=> \&add_to_del,
-	);
+    if ($nr == 2) {
+	$w{$nr}->add(undef, 'Listbox',
+		     -y			=> 5,
+		     -x			=> 2,
+		     -fg		=> "red",
+		     -bfg		=> "red",
+		     -padbottom		=> 10,
+		     -values		=> $value,
+		     -width		=> 30,
+		     -border		=> 1,
+		     -multi		=> 1,
+		     -title		=> 'Feed List',
+		     -vscrollbar	=> 1,
+		     -onchange		=> \&add_to_del,
+	    );
+    } else {
+	$w{$nr}->add(undef, 'Listbox',
+		     -y			=> 5,
+		     -x			=> 2,
+		     -fg		=> 'green',
+		     -bfg		=> 'green',
+		     -padbottom		=> 10,
+		     -values		=> $value,
+		     -width		=> 30,
+		     -border		=> 1,
+		     -title		=> 'Feed List',
+		     -vscrollbar	=> 1,
+		     -onchange		=> \&fetch_articles,
+	    );
+    }
 }
 
     
