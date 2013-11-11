@@ -32,6 +32,8 @@ unless (-e $feed_file) {
     open $FH, '>', $feed_file and close $FH;
 }
 $dbh->do("CREATE TABLE IF NOT EXISTS FeedsNames(id INT PRIMARY KEY, Name TEXT UNIQUE, URL TEXT UNIQUE)");
+$dbh->do("DROP TABLE IF EXISTS Articles");
+$dbh->do("CREATE TABLE Articles(id INT PRIMARY KEY, Name TEXT UNIQUE, Title TEXT UNIQUE, Desc TEXT UNIQUE, Link TEXT UNIQUE");
 
 # ----------------------------------------------------------------------
 #Menu
@@ -286,14 +288,12 @@ $w{3}->add(undef, 'Label',
 	   -text	=> "Here you can view your feeds",
 );
 
-$w{3}->add(undef, 'Listbox',
+$w{3}->add('articlename', 'Listbox',
 	   -y		=> 5,
 	   -x		=> 35,
 	   -padbottom	=> 10,
 	   -fg		=> 'green',
 	   -bfg		=> 'green',
-	   -values	=> [1, 2, 3,],
-	   -labels	=> {1 => 'lol', 2 => 'poil', 3 => 'mdr'},
 	   -width	=> 20,
 	   -border	=> 1,
 	   -title	=> 'Article List',
@@ -303,7 +303,6 @@ $w{3}->add(undef, 'Listbox',
 
 $w{3}->add('articletext', 'TextViewer',
 	   -title		=> "Article",
-	   -text		=> "lol",
 	   -fg			=> 'green',
 	   -bfg			=> 'green',
 	   -border		=> 1,
@@ -315,7 +314,26 @@ $w{3}->add('articletext', 'TextViewer',
 	   -width		=> 70,
 );
 	 
+sub fetch_articles {
+    my $listbox = shift;
+    my $values = $listbox->parent->getobj('articlename');
+    my $to_fetch = $listbox->get;
 
+    my $sth = $dbh->prepare("SELECT Name, URL FROM FeedsNames WHERE Name = ?");
+    $sth->execute($to_fetch);
+
+    my $row;
+    while ($row = $sth->fetchrow_arrayref()) {
+	my $feed = XML::Feed->parse(URI->new(@$row[1]))
+	    or $cui->errstr "Something went wrong: XML::Feed->errstr";
+
+	for my $entry ($feed->entries) {
+	    my $title = $entry->title;
+	    my $body = $entry->content->body; $body =~ s|<.+?>||g;
+	    my $link = $entry->link;
+	}
+    }
+}
 
 # ----------------------------------------------------------------------
 #Bindings and focus 
