@@ -245,9 +245,25 @@ $w{2}->add('DelButton', 'Buttonbox',
 	   -x		=> 10,
 );
 
-sub add_to_del {
+my @to_del;
 
+sub add_to_del {
+    my $listbox = shift;
+    my $label = $listbox->parent->getobj('listboxlabel');
+    @to_del = $listbox->get;
+    @to_del = ('< none >') unless @to_del;
+    my $to_del = "selected " . join (", ", @to_del);
+    $label->text($listbox->title . " $to_del");
 }
+
+$w{2}->add(
+    'listboxlabel', 'Label',
+    -y => -1,
+    -bold => 1,
+    -text => "Select the feeds you want to remove please....",
+    -width => -1,
+);
+
 
 sub del_feed {
     
