@@ -267,6 +267,11 @@ $w{2}->add(
 
 sub del_feed {
     
+    foreach (@to_del) {
+	my $sth = $dbh->prepare("DELETE FROM FeedsNames WHERE Name = ?");
+	$sth->execute($_)
+	    or $cui->errstr("Somethin went wrong: $DBI::errstr");
+    }
 }
 
 # ----------------------------------------------------------------------
