@@ -6,6 +6,8 @@ use DBI;
 use XML::Feed;
 use LWP::Simple;
 
+use feature 'state';
+
 #-----------------------------------------------------------------------
 #Full scope vars and init
 #-----------------------------------------------------------------------
@@ -32,8 +34,6 @@ unless (-e $feed_file) {
     open $FH, '>', $feed_file and close $FH;
 }
 $dbh->do("CREATE TABLE IF NOT EXISTS FeedsNames(id INT PRIMARY KEY, Name TEXT UNIQUE, URL TEXT UNIQUE)");
-$dbh->do("DROP TABLE IF EXISTS Articles");
-$dbh->do("CREATE TABLE Articles(id INT PRIMARY KEY, Name TEXT UNIQUE, Title TEXT UNIQUE, Desc TEXT UNIQUE, Link TEXT UNIQUE");
 
 # ----------------------------------------------------------------------
 #Menu
@@ -315,24 +315,29 @@ $w{3}->add('articletext', 'TextViewer',
 );
 	 
 sub fetch_articles {
+    $dbh->do("DROP TABLE IF EXISTS Articles");
+    $dbh->do("CREATE TABLE Articles(id INT PRIMARY KEY, Name TEXT UNIQUE, Title TEXT UNIQUE, Desc TEXT UNIQUE, Link TEXT UNIQUE");
+
     my $listbox = shift;
     my $values = $listbox->parent->getobj('articlename');
     my $to_fetch = $listbox->get;
-
+        
     my $sth = $dbh->prepare("SELECT Name, URL FROM FeedsNames WHERE Name = ?");
     $sth->execute($to_fetch);
-
+    
     my $row;
+    my $val1;
+    my @val1;
     while ($row = $sth->fetchrow_arrayref()) {
-	my $feed = XML::Feed->parse(URI->new(@$row[1]))
-	    or $cui->errstr "Something went wrong: XML::Feed->errstr";
-
+	my $feed = XML::Feed->parse(URI->new(@$row[1]));
+	
 	for my $entry ($feed->entries) {
 	    my $title = $entry->title;
-	    my $body = $entry->content->body; $body =~ s|<.+?>||g;
-	    my $link = $entry->link;
+	    push @val1, $title . ",";
 	}
     }
+    $val1 = @val1;
+    $values->values($val1); 
 }
 
 # ----------------------------------------------------------------------
