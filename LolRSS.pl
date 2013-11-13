@@ -1,12 +1,10 @@
-#! /usr/bin/perl
+#!/usr/bin/perl
 
 use Modern::Perl;
 use Curses::UI;
 use DBI;
 use XML::Feed;
 use LWP::Simple;
-
-use feature 'state';
 
 #-----------------------------------------------------------------------
 #Full scope vars and init
@@ -155,7 +153,7 @@ sub refresh_list() {
 		     -bfg		=> 'green',
 		     -padbottom		=> 10,
 		     -values		=> $value,
-		     -width		=> 30,
+		     -width		=> 15,
 		     -border		=> 1,
 		     -title		=> 'Feed List',
 		     -vscrollbar	=> 1,
@@ -290,14 +288,15 @@ $w{3}->add(undef, 'Label',
 
 $w{3}->add('articlename', 'Listbox',
 	   -y		=> 5,
-	   -x		=> 35,
+	   -x		=> 18,
 	   -padbottom	=> 10,
 	   -fg		=> 'green',
 	   -bfg		=> 'green',
-	   -width	=> 20,
+	   -width	=> 40,
 	   -border	=> 1,
 	   -title	=> 'Article List',
 	   -vscrollbar  => 1,
+	   -wrapping	=> 1,
 	   -onchange	=> \&display_content,
 );
 
@@ -316,7 +315,7 @@ $w{3}->add('articletext', 'TextViewer',
 	 
 sub fetch_articles {
     $dbh->do("DROP TABLE IF EXISTS Articles");
-    $dbh->do("CREATE TABLE Articles(id INT PRIMARY KEY, Name TEXT UNIQUE, Title TEXT UNIQUE, Desc TEXT UNIQUE, Link TEXT UNIQUE");
+    $dbh->do("CREATE TABLE Articles(id INT PRIMARY KEY, Name TEXT UNIQUE, Title TEXT UNIQUE, Desc TEXT UNIQUE, Link TEXT UNIQUE)");
 
     my $listbox = shift;
     my $values = $listbox->parent->getobj('articlename');
@@ -332,12 +331,32 @@ sub fetch_articles {
 	my $feed = XML::Feed->parse(URI->new(@$row[1]));
 	
 	for my $entry ($feed->entries) {
-	    my $title = $entry->title;
-	    push @val1, $title . ",";
+            my $title = $entry->title;
+            my $body = $entry->content->body; $body =~ s|<.+?>||g;
+            my $link = $entry->link;
+            my $h = $dbh->prepare("INSERT INTO Articles(Name, Title, Desc, Link) VALUES(?,?,?,?)");
+            $h->execute(@$row[0], $title, $body, $link);
+	    push @val1, $title;
 	}
     }
-    $val1 = @val1;
+    $val1 = \@val1;
     $values->values($val1); 
+}
+
+sub display_content {
+    my $listbox = shift;
+    my $textview = $listbox->parent->getobj('articletext');
+    my $to_display = $listbox->get;
+    
+    my $sth = $dbh->prepare("SELECT Desc FROM Articles WHERE Title = ?");
+    $sth->execute($to_display);
+    
+    my $row;
+    my $text;
+    while ($row = $sth->fetchrow_arrayref()) {
+	$text = @$row[0];
+    }
+    $textview->text($text);
 }
 
 # ----------------------------------------------------------------------
