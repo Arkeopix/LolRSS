@@ -50,11 +50,11 @@ sub select_page {
 }
 
 my $menu_manage = [
-    { -label => 'Show Feed',   -value  => sub{select_page(3)}	},
-    { -label => 'Add Feed',    -value  => sub{select_page(1)}	},
-    { -label => 'Delete Feed', -value  => sub{select_page(2)}	},
-    { -label => '-----------', -value  => sub{}			},
-    { -label => 'Quit',	       -value  => sub{quit()}		},
+    { -label => 'Show Feed',   -value  => sub{select_page(3)}   },
+    { -label => 'Add Feed',    -value  => sub{select_page(1)}   },
+    { -label => 'Delete Feed', -value  => sub{select_page(2)}   },
+    { -label => '-----------', -value  => sub{}                 },
+    { -label => 'Quit',	       -value  => sub{quit()}           },
 ];
 
 my $menu = [
@@ -226,8 +226,14 @@ $w{1}->add('AddButton', 'Buttonbox',
 );
 
 sub add_feed {
+    my $name = $FeedName->get();
+    my $url = $FeedUrl->get();
+    if ($name eq "//" or $url eq "//") {
+	$cui->error('Both fields must be filled in order to proceed');
+	return;
+    }
     my $sth = $dbh->prepare("INSERT INTO FeedsNames(Name, URL) VALUES(?, ?)");
-    $sth->execute($FeedName->get(), $FeedUrl->get())
+    $sth->execute($name, $url)
 	or $cui->error("Something went wrong: $DBI::errstr");
     $sth->finish();
     return;
