@@ -4,7 +4,7 @@ use Modern::Perl;
 use Curses::UI;
 use DBI;
 use XML::Feed;
-use LWP::Simple;
+#use LWP::Simple;
 
 #-----------------------------------------------------------------------
 #Full scope vars and init
@@ -315,7 +315,7 @@ $w{3}->add('articletext', 'TextViewer',
 	 
 sub fetch_articles {
     $dbh->do("DROP TABLE IF EXISTS Articles");
-    $dbh->do("CREATE TABLE Articles(id INT PRIMARY KEY, Name TEXT UNIQUE, Title TEXT UNIQUE, Desc TEXT UNIQUE, Link TEXT UNIQUE)");
+    $dbh->do("CREATE TABLE Articles(id INT PRIMARY KEY, Name TEXT, Title TEXT UNIQUE, Desc TEXT UNIQUE, Link TEXT UNIQUE)");
 
     my $listbox = shift;
     my $values = $listbox->parent->getobj('articlename');
