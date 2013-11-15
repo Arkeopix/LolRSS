@@ -54,7 +54,7 @@ my $menu_manage = [
     { -label => 'Add Feed',    -value  => sub{select_page(1)}   },
     { -label => 'Delete Feed', -value  => sub{select_page(2)}   },
     { -label => '-----------', -value  => sub{}                 },
-    { -label => 'Quit',	       -value  => sub{quit()}           },
+    { -label => 'Quit',        -value  => sub{quit()}           },
 ];
 
 my $menu = [
@@ -228,7 +228,7 @@ $w{1}->add('AddButton', 'Buttonbox',
 sub add_feed {
     my $name = $FeedName->get();
     my $url = $FeedUrl->get();
-    if ($name eq "//" or $url eq "//") {
+    if ($name eq '//' or $url eq '//') {
 	$cui->error('Both fields must be filled in order to proceed');
 	return;
     }
@@ -286,6 +286,7 @@ sub del_feed {
 	$sth->execute($_)
 	    or $cui->errstr("Somethin went wrong: $DBI::errstr");
     }
+    &refresh_list(2);
     return;
 }
 
@@ -343,7 +344,8 @@ sub fetch_articles {
     my $val1;
     my @val1;
     while ($row = $sth->fetchrow_arrayref()) {
-	my $feed = XML::Feed->parse(URI->new(@$row[1]));
+	my $format = XML::Feed->identify_format(URI->new(@$row[1]));
+	my $feed = XML::Feed->parse(URI->new(@$row[1], $format));
 
 	for my $entry ($feed->entries) {
 	    my $title = $entry->title;
